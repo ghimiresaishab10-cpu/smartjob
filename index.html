@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>SmartJob - Find Your Dream Job</title>
+  <meta name="title" content="SmartJob - Find Your Dream Job" />
+  <meta
+    name="description"
+    content="Find jobs, explore opportunities, and connect companies with candidates on SmartJob."
+  />
+  <meta
+    name="keywords"
+    content="smartjob, jobs, job portal, job finder, career, recruitment, companies, hiring"
+  />
+  <meta name="author" content="SmartJob" />
+  <meta name="robots" content="index, follow" />
+  <meta name="theme-color" content="#2563eb" />
+
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💼</text></svg>">
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: Arial, sans-serif;
+    }
+
+    body {
+      background: #f7f8fc;
+      color: #1f2937;
+      line-height: 1.6;
+    }
+
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .container {
+      width: 90%;
+      max-width: 1200px;
+      margin: auto;
+    }
+
+    .modern-nav {
+      width: 100%;
+      background: #ffffff;
+      border-bottom: 1px solid #e5e7eb;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+
+    .nav-container {
+      width: 90%;
+      max-width: 1200px;
+      margin: auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 0;
+    }
+
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 22px;
+      font-weight: bold;
+      color: #2563eb;
+    }
+
+    .nav-menu {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+    }
+
+    .nav-item {
+      color: #374151;
+      font-size: 15px;
+      transition: 0.3s;
+    }
+
+    .nav-item:hover,
+    .nav-item.active {
+      color: #2563eb;
+    }
+
+    .nav-auth {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .nav-login {
+      color: #2563eb;
+      font-weight: 600;
+    }
+
+    .nav-cta {
+      background: #2563eb;
+      color: #fff;
+      padding: 10px 18px;
+      border-radius: 8px;
+      font-weight: 600;
+      border: none;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    .nav-cta:hover {
+      background: #1d4ed8;
+    }
+
+    .hero-section {
+      padding: 70px 0 50px;
+    }
+
+    .hero-wrapper {
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 40px;
+      align-items: center;
+    }
+
+    .hero-badge {
+      display: inline-block;
+      background: #e0e7ff;
+      color: #2563eb;
+      padding: 8px 14px;
+      font-size: 13px;
+      border-radius: 999px;
+      margin-bottom: 18px;
+      font-weight: 700;
+    }
+
+    .hero-title {
+      font-size: 52px;
+      line-height: 1.1;
+      font-weight: 800;
+      margin-bottom: 18px;
+      color: #111827;
+    }
+
+    .hero-title .blue {
+      color: #2563eb;
+    }
+
+    .hero-subtitle {
+      font-size: 17px;
+      color: #6b7280;
+      margin-bottom: 30px;
+      max-width: 550px;
+    }
+
+    .hero-search {
+      display: flex;
+      gap: 12px;
+      background: #fff;
+      padding: 14px;
+      border-radius: 14px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+    }
+
+    .hero-search input {
+      flex: 1;
+      min-width: 180px;
+      padding: 12px 14px;
+      border: 1px solid #d1d5db;
+      border-radius: 10px;
+      outline: none;
+      font-size: 14px;
+    }
+
+    .hero-search button {
+      background: #2563eb;
+      color: white;
+      border: none;
+      padding: 12px 22px;
+      border-radius: 10px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .hero-actions {
+      display: flex;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+
+    .btn-primary-hero,
+    .btn-secondary-hero {
+      padding: 12px 22px;
+      border-radius: 10px;
+      font-weight: 700;
+      display: inline-block;
+    }
+
+    .btn-primary-hero {
+      background: #2563eb;
+      color: #fff;
+    }
+
+    .btn-secondary-hero {
+      background: #e5edff;
+      color: #2563eb;
+    }
+
+    .hero-image {
+      display: flex;
+      justify-content: center;
+    }
+
+    .hero-image-card {
+      width: 100%;
+      max-width: 430px;
+      background: linear-gradient(135deg, #0f172a, #1e3a8a);
+      border-radius: 24px;
+      padding: 30px;
+      color: white;
+      min-height: 430px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      box-shadow: 0 20px 45px rgba(37, 99, 235, 0.18);
+    }
+
+    .hero-image-card h3 {
+      font-size: 28px;
+      margin-bottom: 14px;
+    }
+
+    .hero-image-card p {
+      color: #dbeafe;
+      font-size: 15px;
+    }
+
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 18px;
+      margin-top: 40px;
+    }
+
+    .stat-item {
+      background: #fff;
+      padding: 20px;
+      border-radius: 16px;
+      text-align: center;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.05);
+    }
+
+    .stat-number {
+      display: block;
+      font-size: 24px;
+      font-weight: 800;
+      color: #2563eb;
+      margin-bottom: 6px;
+    }
+
+    .stat-label {
+      color: #6b7280;
+      font-size: 14px;
+    }
+
+    .section {
+      padding: 70px 0;
+    }
+
+    .section-title {
+      text-align: center;
+      font-size: 34px;
+      margin-bottom: 12px;
+      color: #111827;
+    }
+
+    .section-subtitle {
+      text-align: center;
+      color: #6b7280;
+      max-width: 700px;
+      margin: 0 auto 40px;
+    }
+
+    .how-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+    }
+
+    .how-card {
+      background: #fff;
+      padding: 28px;
+      border-radius: 18px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.05);
+    }
+
+    .how-card h3 {
+      color: #111827;
+      margin-bottom: 10px;
+      font-size: 20px;
+    }
+
+    .how-card p {
+      color: #6b7280;
+      font-size: 15px;
+    }
+
+    .jobs-grid {
+      display: grid;
+      grid-template-columns: 1.1fr 1fr 1fr;
+      gap: 20px;
+    }
+
+    .job-card {
+      background: #fff;
+      border-radius: 18px;
+      padding: 24px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.05);
+    }
+
+    .job-card.featured {
+      background: linear-gradient(135deg, #2563eb, #1d4ed8);
+      color: white;
+      min-height: 320px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .job-tag {
+      display: inline-block;
+      background: rgba(255, 255, 255, 0.16);
+      color: inherit;
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      margin-bottom: 14px;
+    }
+
+    .job-card h3 {
+      margin-bottom: 8px;
+      font-size: 22px;
+    }
+
+    .job-company,
+    .job-location {
+      color: #6b7280;
+      font-size: 14px;
+      margin-bottom: 6px;
+    }
+
+    .featured .job-company,
+    .featured .job-location,
+    .featured p {
+      color: #dbeafe;
+    }
+
+    .job-btn {
+      display: inline-block;
+      margin-top: 18px;
+      background: #ffffff;
+      color: #2563eb;
+      padding: 10px 16px;
+      border-radius: 10px;
+      font-weight: bold;
+      width: fit-content;
+    }
+
+    .cta-section {
+      padding: 80px 0;
+      text-align: center;
+    }
+
+    .cta-box {
+      background: #fff;
+      padding: 50px 20px;
+      border-radius: 24px;
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.05);
+    }
+
+    .cta-box h2 {
+      font-size: 38px;
+      margin-bottom: 14px;
+      color: #111827;
+    }
+
+    .cta-box p {
+      color: #6b7280;
+      margin-bottom: 26px;
+      font-size: 16px;
+    }
+
+    .cta-buttons {
+      display: flex;
+      justify-content: center;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+
+    .site-footer {
+      background: #ffffff;
+      border-top: 1px solid #e5e7eb;
+      margin-top: 40px;
+    }
+
+    .footer-container {
+      width: 90%;
+      max-width: 1200px;
+      margin: auto;
+      padding: 40px 0 20px;
+      display: grid;
+      grid-template-columns: 1.3fr 1fr 1fr;
+      gap: 24px;
+    }
+
+    .footer-section h4 {
+      margin-bottom: 12px;
+      color: #111827;
+    }
+
+    .footer-section p,
+    .footer-section li,
+    .footer-section a {
+      color: #6b7280;
+      font-size: 14px;
+      list-style: none;
+      margin-bottom: 8px;
+    }
+
+    .footer-bottom {
+      width: 90%;
+      max-width: 1200px;
+      margin: auto;
+      padding: 16px 0 24px;
+      border-top: 1px solid #e5e7eb;
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 10px;
+      color: #6b7280;
+      font-size: 14px;
+    }
+
+    @media (max-width: 992px) {
+      .hero-wrapper,
+      .how-grid,
+      .jobs-grid,
+      .stats-row,
+      .footer-container {
+        grid-template-columns: 1fr;
+      }
+
+      .hero-title {
+        font-size: 40px;
+      }
+
+      .nav-container {
+        flex-direction: column;
+        gap: 16px;
+      }
+
+      .nav-menu {
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+    }
+
+    @media (max-width: 576px) {
+      .hero-title {
+        font-size: 34px;
+      }
+
+      .section-title,
+      .cta-box h2 {
+        font-size: 28px;
+      }
+
+      .hero-section {
+        padding-top: 40px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <nav class="modern-nav">
+    <div class="nav-container">
+      <a href="index.html" class="nav-logo">
+        <span>SmartJob</span>
+      </a>
+
+      <div class="nav-menu">
+        <a href="index.html" class="nav-item active">Home</a>
+        <a href="find-jobs.html" class="nav-item">Find Jobs</a>
+        <a href="about.html" class="nav-item">About</a>
+
+        <div class="nav-auth">
+          <a href="login.html" class="nav-login">Login</a>
+          <a href="signup.html" class="nav-cta">Register</a>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <main>
+    <section class="hero-section">
+      <div class="container">
+        <div class="hero-wrapper">
+          <div class="hero-content">
+            <span class="hero-badge">NEXT-GEN RECRUITMENT</span>
+            <h1 class="hero-title">
+              Find Your <span class="blue">Dream Job</span> with Smart Technology
+            </h1>
+            <p class="hero-subtitle">
+              SmartJob connects talented people with top companies. Search jobs,
+              explore opportunities, and build your future with a smarter hiring platform.
+            </p>
+
+            <div class="hero-search">
+              <input type="text" placeholder="Job title or keywords" />
+              <input type="text" placeholder="Location" />
+              <button onclick="window.location.href='find-jobs.html'">Search</button>
+            </div>
+
+            <div class="hero-actions">
+              <a href="find-jobs.html" class="btn-primary-hero">Find Jobs</a>
+              <a href="auth.html#register" class="btn-secondary-hero">Create Profile</a>
+            </div>
+
+            <div class="stats-row">
+              <div class="stat-item">
+                <span class="stat-number">10k+</span>
+                <span class="stat-label">Active Candidates</span>
+              </div>
+              <div class="stat-item">
+                <span class="stat-number">500+</span>
+                <span class="stat-label">Companies Hiring</span>
+              </div>
+              <div class="stat-item">
+                <span class="stat-number">2k+</span>
+                <span class="stat-label">Open Positions</span>
+              </div>
+              <div class="stat-item">
+                <span class="stat-number">24/7</span>
+                <span class="stat-label">Job Access</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="hero-image">
+            <div class="hero-image-card">
+              <h3>Smarter Search. Better Careers.</h3>
+              <p>
+                Search jobs, discover companies, and apply faster with a clean
+                platform made for job seekers and recruiters.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container">
+        <h2 class="section-title">How It Works</h2>
+        <p class="section-subtitle">
+          SmartJob makes the hiring process easier for both candidates and companies.
+        </p>
+
+        <div class="how-grid">
+          <div class="how-card">
+            <h3>Create Profile</h3>
+            <p>
+              Sign up, add your information, and build a professional profile to start your journey.
+            </p>
+          </div>
+
+          <div class="how-card">
+            <h3>Search Jobs</h3>
+            <p>
+              Explore job opportunities by title, company, or location and find the roles that match you.
+            </p>
+          </div>
+
+          <div class="how-card">
+            <h3>Apply & Track</h3>
+            <p>
+              Apply for jobs easily and track your applications while companies review candidates.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container">
+        <h2 class="section-title">Featured Opportunities</h2>
+        <p class="section-subtitle">
+          Explore some highlighted roles currently available on SmartJob.
+        </p>
+
+        <div class="jobs-grid">
+          <div class="job-card featured">
+            <div>
+              <span class="job-tag">Featured</span>
+              <h3>Senior Product Designer</h3>
+              <p class="job-company">CuratorFlow</p>
+              <p class="job-location">San Francisco, CA</p>
+              <p>
+                Lead product experiences for a modern design-driven company.
+              </p>
+            </div>
+            <a href="job-details.html" class="job-btn">Apply Now</a>
+          </div>
+
+          <div class="job-card">
+            <span class="job-tag" style="background:#e5edff;color:#2563eb;">New</span>
+            <h3>Marketing Lead</h3>
+            <p class="job-company">TechFlow</p>
+            <p class="job-location">San Francisco</p>
+          </div>
+
+          <div class="job-card">
+            <span class="job-tag" style="background:#eef2ff;color:#2563eb;">Remote</span>
+            <h3>Backend Developer</h3>
+            <p class="job-company">DataX</p>
+            <p class="job-location">Remote</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="cta-section">
+      <div class="container">
+        <div class="cta-box">
+          <h2>Ready to Elevate Your Career?</h2>
+          <p>
+            Join SmartJob and connect with companies that are looking for the best talent.
+          </p>
+
+          <div class="cta-buttons">
+            <a href="signup.html#register" class="btn-primary-hero">Create Your Profile</a>
+            <a href="find-jobs.html" class="btn-secondary-hero">Explore Jobs</a>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-container">
+      <div class="footer-section">
+        <h4>SmartJob</h4>
+        <p>Find your dream job with smart technology.</p>
+      </div>
+
+      <div class="footer-section">
+        <h4>Pages</h4>
+        <ul>
+          <li><a href="index.html">Home</a></li>
+          <li><a href="find-jobs.html">Find Jobs</a></li>
+          <li><a href="about.html">About</a></li>
+          <li><a href="login.html">Login</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-section">
+        <h4>Support</h4>
+        <ul>
+          <li><a href="signup.html">Register</a></li>
+          <li><a href="job-details.html">Job Details</a></li>
+          <li><a href="apply-job.html">Apply Job</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <p>&copy; 2026 SmartJob. All rights reserved.</p>
+      <p>Built for job seekers and companies.</p>
+    </div>
+  </footer>
+</body>
+</html>
