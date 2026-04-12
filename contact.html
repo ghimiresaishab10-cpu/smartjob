@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Contact - Smart Job</title>
+
+  <script src="https://cdn.tailwindcss.com?plugins=forms"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="css/style.css"/>
+
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: #faf8ff;
+    }
+  </style>
+</head>
+
+<body onload="loadLayout()" class="min-h-screen">
+
+  <!-- Navbar -->
+  <div id="navbar"></div>
+
+  <!-- Main -->
+  <main class="pt-28 pb-16 px-6 max-w-6xl mx-auto">
+
+    <h1 class="text-4xl font-extrabold mb-10 text-center">Contact Us</h1>
+
+    <div class="grid md:grid-cols-2 gap-10">
+
+      <!-- LEFT: Contact Info -->
+      <div class="bg-white rounded-2xl shadow p-8 space-y-6">
+
+        <h2 class="text-2xl font-bold mb-4">Get in Touch</h2>
+
+        <!-- Email -->
+        <div>
+          <p class="text-slate-500 text-sm">Email</p>
+          <p class="font-semibold text-lg">smartjob@gmail.com</p>
+        </div>
+
+        <!-- Phone -->
+        <div>
+          <p class="text-slate-500 text-sm">Phone</p>
+          <p class="font-semibold text-lg">+977 9800000000</p>
+        </div>
+
+        <!-- Social -->
+        <div class="pt-4">
+          <p class="text-slate-500 text-sm mb-3">Follow Us</p>
+
+          <div class="flex gap-4 flex-wrap">
+
+            <a href="#" class="px-4 py-2 rounded-full bg-blue-700 text-white text-sm">Facebook</a>
+
+            <a href="#" class="px-4 py-2 rounded-full bg-pink-500 text-white text-sm">Instagram</a>
+
+            <a href="#" class="px-4 py-2 rounded-full bg-black text-white text-sm">TikTok</a>
+
+          </div>
+        </div>
+
+      </div>
+
+      <!-- RIGHT: Contact Form -->
+      <div class="bg-white rounded-2xl shadow p-8">
+
+        <h2 class="text-2xl font-bold mb-6">Send Message</h2>
+
+        <form id="contactForm" class="space-y-5">
+
+          <input
+            type="text"
+            placeholder="Your Name"
+            required
+            class="w-full p-4 rounded-xl bg-slate-100 outline-none"
+          />
+
+          <input
+            type="email"
+            placeholder="Your Email"
+            required
+            class="w-full p-4 rounded-xl bg-slate-100 outline-none"
+          />
+
+          <textarea
+            rows="5"
+            placeholder="Your Message"
+            required
+            class="w-full p-4 rounded-xl bg-slate-100 outline-none"
+          ></textarea>
+
+          <button
+            type="submit"
+            class="w-full bg-blue-700 text-white py-3 rounded-full font-semibold hover:bg-blue-800"
+          >
+            Send Message
+          </button>
+
+        </form>
+
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- Footer -->
+  <div id="footer"></div>
+
+  <script src="js/app.js"></script>
+
+  <script>
+    // simple frontend submit (no backend yet)
+    document.getElementById("contactForm").addEventListener("submit", function(e){
+      e.preventDefault();
+      alert("Message sent successfully!");
+      this.reset();
+    });
+  </script>
+
+</body>
+</html>

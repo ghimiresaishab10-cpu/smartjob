@@ -1,0 +1,123 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap');
+
+* { box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'Poppins', sans-serif;
+  margin: 0;
+  background: #faf8ff;
+  color: #191b23;
+}
+
+.active-nav {
+  color: #2563eb !important;
+  border-bottom: 2px solid #2563eb;
+  padding-bottom: 4px;
+}
+
+.editorial-shadow {
+  box-shadow: 0 8px 32px rgba(25, 27, 35, 0.06);
+}
+
+.form-input,
+.form-textarea,
+.form-select {
+  width: 100%;
+  padding: 14px 16px;
+  border: 1px solid #e5e7eb;
+  border-radius: 14px;
+  background: #f8fafc;
+  outline: none;
+  font-family: 'Poppins', sans-serif;
+}
+
+.form-input:focus,
+.form-textarea:focus,
+.form-select:focus {
+  border-color: #2563eb;
+  background: white;
+}
+
+.btn-primary {
+  background: #2563eb;
+  color: white;
+  border: none;
+  border-radius: 9999px;
+  padding: 12px 22px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: 'Poppins', sans-serif;
+}
+
+.btn-primary:hover { background: #1d4ed8; }
+
+.btn-outline {
+  background: white;
+  color: #2563eb;
+  border: 1px solid #cbd5e1;
+  border-radius: 9999px;
+  padding: 12px 22px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: 'Poppins', sans-serif;
+}
+
+.card {
+  background: white;
+  border-radius: 20px;
+  padding: 24px;
+  box-shadow: 0 8px 32px rgba(25, 27, 35, 0.04);
+}
+
+.small-btn {
+  padding: 8px 14px;
+  border-radius: 9999px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+}
+
+.small-blue {
+  background: #2563eb;
+  color: white;
+}
+
+.small-red {
+  background: #dc2626;
+  color: white;
+}
+
+.small-gray {
+  background: white;
+  color: #2563eb;
+  border: 1px solid #cbd5e1;
+}
+
+.badge {
+  display: inline-block;
+  padding: 6px 12px;
+  border-radius: 9999px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.badge-blue {
+  background: #dbeafe;
+  color: #2563eb;
+}
+
+.badge-orange {
+  background: #ffedd5;
+  color: #c2410c;
+}
+
+.hidden-force { display: none !important; }
+
+@media (max-width: 1024px) {
+  .jobs-grid {
+    grid-template-columns: 1fr !important;
+  }
+}
