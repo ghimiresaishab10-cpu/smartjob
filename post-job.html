@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Post Job - Smart Job</title>
+  <script src="https://cdn.tailwindcss.com?plugins=forms"></script>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body onload="protect(); requireRecruiter(); loadLayout()" class="bg-[#faf8ff]">
+
+  <div id="navbar"></div>
+
+  <main class="pt-28 pb-20 px-6 max-w-4xl mx-auto">
+    <div class="card">
+      <h1 class="text-3xl font-bold mb-8">Post a New Job</h1>
+
+      <form id="job-form" class="space-y-5">
+        <input id="title" class="form-input" type="text" placeholder="Job Title" required />
+        <textarea id="description" class="form-textarea" rows="5" placeholder="Job Description" required></textarea>
+        <textarea id="requirements" class="form-textarea" rows="4" placeholder="Requirements"></textarea>
+        <input id="location" class="form-input" type="text" placeholder="Location" />
+        <input id="salaryRange" class="form-input" type="text" placeholder="Salary Range" />
+        <input id="jobType" class="form-input" type="text" placeholder="Job Type" />
+        <input id="experienceLevel" class="form-input" type="text" placeholder="Experience Level" />
+        <input id="skills" class="form-input" type="text" placeholder="Skills (comma separated)" />
+
+        <button class="btn-primary" type="submit">Create Job</button>
+      </form>
+    </div>
+  </main>
+
+  <div id="footer"></div>
+
+  <script src="js/app.js"></script>
+  <script>
+    document.getElementById("job-form").addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      try {
+        await apiFetch("/jobs", {
+          method: "POST",
+          body: JSON.stringify({
+            title: document.getElementById("title").value,
+            description: document.getElementById("description").value,
+            requirements: document.getElementById("requirements").value,
+            location: document.getElementById("location").value,
+            salaryRange: document.getElementById("salaryRange").value,
+            jobType: document.getElementById("jobType").value,
+            experienceLevel: document.getElementById("experienceLevel").value,
+            skills: document.getElementById("skills").value
+          })
+        });
+
+        alert("Job created successfully");
+        location.href = "recruiter-jobs.html";
+      } catch (err) {
+        alert(err.message);
+      }
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Job Details - Smart Job</title>
+  <script src="https://cdn.tailwindcss.com?plugins=forms"></script>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body onload="protect(); loadLayout('jobs'); loadJobDetails()" class="bg-[#faf8ff]">
+
+  <div id="navbar"></div>
+
+  <main class="pt-28 pb-20 px-6 max-w-7xl mx-auto">
+    <div class="mb-8">
+      <a href="jobs.html" class="inline-flex items-center text-blue-700 font-bold text-sm hover:underline">
+        ← Back to Jobs
+      </a>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-12">
+      <div class="lg:col-span-8 space-y-8">
+        <div class="card">
+          <span id="job-status"></span>
+          <h1 id="job-title" class="text-4xl font-extrabold mt-4">Loading...</h1>
+          <p id="job-meta" class="text-slate-500 mt-3"></p>
+        </div>
+
+        <div class="card">
+          <h2 class="text-2xl font-bold mb-4">Job Description</h2>
+          <p id="job-description" class="text-slate-600 leading-7"></p>
+        </div>
+      </div>
+
+      <aside class="lg:col-span-4">
+        <div class="card sticky top-28">
+          <h3 class="text-xl font-bold mb-6">Position Overview</h3>
+          <div class="space-y-4 text-sm">
+            <p><strong>Salary:</strong> <span id="job-salary">N/A</span></p>
+            <p><strong>Location:</strong> <span id="job-location">N/A</span></p>
+          </div>
+
+          <div id="job-actions" class="mt-8"></div>
+        </div>
+      </aside>
+    </div>
+  </main>
+
+  <div id="footer"></div>
+
+  <script src="js/app.js"></script>
+  <script>
+    let currentJob = null;
+
+    async function loadJobDetails() {
+      const id = getJobId();
+      if (!id) {
+        location.href = "jobs.html";
+        return;
+      }
+
+      const job = await apiFetch(`/jobs/${id}`);
+      currentJob = job;
+
+      document.getElementById("job-status").innerHTML = job.isClosed
+        ? `<span class="badge badge-orange">Closed</span>`
+        : `<span class="badge badge-blue">Open</span>`;
+
+      document.getElementById("job-title").textContent = job.title || "Untitled Job";
+      document.getElementById("job-meta").textContent = `${job.companyName || "Company"} • ${job.location || "Location not specified"}`;
+      document.getElementById("job-description").textContent = job.description || "No description available.";
+      document.getElementById("job-salary").textContent = job.salaryRange || "N/A";
+      document.getElementById("job-location").textContent = job.location || "N/A";
+
+      const user = getUser();
+      const actions = document.getElementById("job-actions");
+
+      if (user?.role === "candidate" && !job.isClosed) {
+        actions.innerHTML = `<button onclick="location.href='apply.html'" class="btn-primary w-full">Apply Now</button>`;
+      } else if (user?.role === "recruiter") {
+        actions.innerHTML = `
+          <div class="flex flex-col gap-3">
+            ${job.isClosed
+              ? `<button onclick="reopenJob()" class="btn-primary w-full">Reopen Job</button>`
+              : `<button onclick="closeJob()" class="btn-outline w-full">Close Job</button>`
+            }
+            <button onclick="deleteJob()" class="btn-primary w-full" style="background:#dc2626">Delete Job</button>
+          </div>
+        `;
+      } else {
+        actions.innerHTML = `<button onclick="location.href='login.html'" class="btn-primary w-full">Login to Continue</button>`;
+      }
+    }
+
+    async function closeJob() {
+      await apiFetch(`/jobs/${currentJob.id}/close`, { method: "PATCH" });
+      loadJobDetails();
+    }
+
+    async function reopenJob() {
+      await apiFetch(`/jobs/${currentJob.id}/reopen`, { method: "PATCH" });
+      loadJobDetails();
+    }
+
+    async function deleteJob() {
+      if (!confirm("Delete this job?")) return;
+      await apiFetch(`/jobs/${currentJob.id}`, { method: "DELETE" });
+      location.href = "jobs.html";
+    }
+  </script>
+</body>
+</html>
