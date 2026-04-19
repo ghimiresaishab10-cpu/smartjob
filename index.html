@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Smart Job</title>
+  <script src="https://cdn.tailwindcss.com?plugins=forms"></script>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body onload="loadLayout('home')" class="bg-[#faf8ff]">
+
+  <div id="navbar"></div>
+
+  <section class="pt-32 pb-20 px-6 max-w-7xl mx-auto grid lg:grid-cols-2 gap-12 items-center">
+    <div>
+      <span class="bg-blue-100 text-blue-700 px-4 py-1 rounded-full text-xs font-semibold">
+        NEXT-GEN RECRUITMENT
+      </span>
+
+      <h1 class="text-5xl md:text-6xl font-extrabold mt-6 leading-tight">
+        Find Your <span class="text-blue-700">Dream Job</span> with Smart Technology
+      </h1>
+
+      <p class="text-gray-500 mt-6 text-lg max-w-lg">
+        Discover curated job opportunities tailored to your skills and career goals.
+      </p>
+
+      <div class="bg-white p-3 rounded-full shadow-lg mt-8 flex flex-col md:flex-row gap-3">
+        <input id="search" class="flex-1 px-4 py-2 outline-none" placeholder="Job title">
+        <input id="location" class="flex-1 px-4 py-2 outline-none" placeholder="Location">
+        <button onclick="goToJobs()" class="bg-blue-700 text-white px-6 py-2 rounded-full">
+          Search
+        </button>
+      </div>
+    </div>
+
+    <div class="hidden lg:block relative">
+      <div class="absolute -top-20 -right-20 w-[500px] h-[500px] bg-blue-200 opacity-30 rounded-full blur-[100px]"></div>
+
+      <div>
+        <img src="uploads/homepage/landingpage1.png" class="w-full aspect-[4/5] object-cover hover:scale-105 transition duration-500" alt="Landing">
+      </div>
+    </div>
+  </section>
+
+  <section class="max-w-7xl mx-auto px-6 pb-20">
+    <h2 class="text-3xl font-bold text-center mb-10">How It Works</h2>
+
+    <div class="grid md:grid-cols-3 gap-8">
+      <div class="bg-white p-6 rounded-xl shadow text-center">
+        <div class="w-14 h-14 mx-auto mb-4 bg-blue-100 rounded-xl flex items-center justify-center">
+          <img src="uploads/homepage/landingIcon.svg" class="w-7 h-7" alt="Create profile">
+        </div>
+        <h3 class="font-bold mb-2">Create Profile</h3>
+        <p class="text-gray-500 text-sm">Build your professional identity.</p>
+      </div>
+
+      <div class="bg-white p-6 rounded-xl shadow text-center">
+        <div class="w-14 h-14 mx-auto mb-4 bg-blue-100 rounded-xl flex items-center justify-center">
+          <img src="uploads/homepage/landingIcon1.svg" class="w-7 h-7" alt="Search jobs">
+        </div>
+        <h3 class="font-bold mb-2">Search Jobs</h3>
+        <p class="text-gray-500 text-sm">Find relevant job listings.</p>
+      </div>
+
+      <div class="bg-white p-6 rounded-xl shadow text-center">
+        <div class="w-14 h-14 mx-auto mb-4 bg-blue-100 rounded-xl flex items-center justify-center">
+          <img src="uploads/homepage/landingIcon2.svg" class="w-7 h-7" alt="Apply and track">
+        </div>
+        <h3 class="font-bold mb-2">Apply & Track</h3>
+        <p class="text-gray-500 text-sm">Manage your applications easily.</p>
+      </div>
+    </div>
+  </section>
+
+  <div id="footer"></div>
+
+  <script src="js/app.js"></script>
+<script src="js/app.js"></script>
+<script>
+  function goToJobs() {
+    localStorage.setItem("search", document.getElementById("search").value || "");
+    localStorage.setItem("location", document.getElementById("location").value || "");
+
+    const token = localStorage.getItem("token");
+
+    if (!token) {
+      localStorage.setItem("redirectAfterLogin", "jobs");
+      location.href = "login.html";
+      return;
+    }
+
+    location.href = "jobs.html";
+  }
+</script>
+</body>
+</html>

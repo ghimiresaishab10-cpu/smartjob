@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Apply - Smart Job</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms"></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      body {
+        font-family: "Poppins", sans-serif;
+        background: #faf8ff;
+      }
+    </style>
+  </head>
+  <body
+    onload="
+      protect();
+      requireCandidate();
+      loadLayout('jobs');
+      loadApplyInfo();
+    "
+  >
+    <div id="navbar"></div>
+
+    <main class="pt-28 pb-20 px-6 max-w-5xl mx-auto">
+      <div class="grid lg:grid-cols-2 gap-8">
+        <div class="bg-white rounded-2xl shadow p-6">
+          <h2 class="text-2xl font-bold mb-6">Apply for this Job</h2>
+
+          <form id="apply-form" class="space-y-5">
+            <input
+              id="fullName"
+              class="w-full p-4 rounded-xl bg-slate-100 outline-none"
+              type="text"
+              placeholder="Full Name"
+              required
+            />
+            <input
+              id="email"
+              class="w-full p-4 rounded-xl bg-slate-100 outline-none"
+              type="email"
+              placeholder="Email"
+              required
+            />
+            <input
+              id="phone"
+              class="w-full p-4 rounded-xl bg-slate-100 outline-none"
+              type="text"
+              placeholder="Phone Number"
+            />
+            <textarea
+              id="coverLetter"
+              class="w-full p-4 rounded-xl bg-slate-100 outline-none"
+              rows="5"
+              placeholder="Why are you a good fit?"
+            ></textarea>
+            <input
+              id="resume"
+              class="w-full p-4 rounded-xl bg-slate-100 outline-none"
+              type="file"
+              accept=".pdf"
+              required
+            />
+
+            <button
+              class="bg-blue-700 text-white px-6 py-3 rounded-full font-semibold"
+              type="submit"
+            >
+              Submit Application
+            </button>
+          </form>
+        </div>
+
+        <div class="bg-white rounded-2xl shadow p-6">
+          <h3 class="text-xl font-bold mb-4">Application Summary</h3>
+          <p id="apply-job-title" class="font-semibold text-lg"></p>
+          <p id="apply-job-meta" class="text-slate-500 mt-2"></p>
+        </div>
+      </div>
+    </main>
+
+    <div id="footer"></div>
+
+    <script src="js/app.js"></script>
+    <script>
+      let currentJobId = null;
+
+      async function loadApplyInfo() {
+        currentJobId = getJobId();
+        if (!currentJobId) {
+          location.href = "jobs.html";
+          return;
+        }
+
+        const user = getUser();
+        if (user) {
+          document.getElementById("fullName").value = user.name || "";
+          document.getElementById("email").value = user.email || "";
+        }
+
+        try {
+          const job = await apiFetch(`/jobs/${currentJobId}`);
+          document.getElementById("apply-job-title").textContent =
+            job.title || "Untitled Job";
+          document.getElementById("apply-job-meta").textContent =
+            `${job.recruiter?.company?.name || "Company"} • ${job.location || "Location not specified"}`;
+        } catch (err) {
+          alert(err.message);
+          location.href = "jobs.html";
+        }
+      }
+
+      document
+        .getElementById("apply-form")
+        .addEventListener("submit", async (e) => {
+          e.preventDefault();
+
+          const file = document.getElementById("resume").files[0];
+          if (!file) {
+            alert("Please upload your resume");
+            return;
+          }
+
+          const formData = new FormData();
+          formData.append("jobId", currentJobId);
+          formData.append(
+            "fullName",
+            document.getElementById("fullName").value,
+          );
+          formData.append("email", document.getElementById("email").value);
+          formData.append("phone", document.getElementById("phone").value);
+          formData.append(
+            "coverLetter",
+            document.getElementById("coverLetter").value,
+          );
+          formData.append("resume", file);
+
+          try {
+            await apiFetch("/applications", {
+              method: "POST",
+              body: formData,
+              headers: {},
+            });
+
+            alert("Application submitted successfully");
+            location.href = "my-applications.html";
+          } catch (err) {
+            alert(err.message);
+          }
+        });
+    </script>
+  </body>
+</html>
