@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>My Applications - Smart Job</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms"></script>
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+  <body
+    onload="
+      protect();
+      requireCandidate();
+      loadLayout('jobs');
+      loadMyApplications();
+    "
+  >
+    <div id="navbar"></div>
+    <main class="pt-28 pb-20 px-6 max-w-6xl mx-auto w-full">
+      <div class="mb-8">
+        <h1 class="text-3xl font-bold">My Applications</h1>
+        <p class="text-slate-500 mt-2">
+          Track, review and cancel your job applications.
+        </p>
+      </div>
+      <div class="card mb-6">
+        <input
+          id="my-app-search"
+          class="form-input"
+          placeholder="Search applications by job title, company or location"
+          oninput="renderMyApplications()"
+        />
+      </div>
+      <div id="applications-list" class="space-y-6"></div>
+    </main>
+    <div id="footer"></div>
+    <script src="js/app.js"></script>
+    <script>
+      let myApps = [];
+      function statusBadge(status) {
+        const v = (status || "pending").toLowerCase();
+        const cls =
+          v === "rejected"
+            ? "bg-red-100 text-red-700"
+            : v === "in review"
+              ? "bg-yellow-100 text-yellow-700"
+              : v === "accepted"
+                ? "bg-green-100 text-green-700"
+                : "bg-blue-100 text-blue-700";
+        return `<span class="inline-block px-3 py-1 rounded-full text-xs font-semibold ${cls} capitalize">${escapeHTML(v)}</span>`;
+      }
+      async function loadMyApplications() {
+        try {
+          myApps = await apiFetch("/applications/my");
+          renderMyApplications();
+        } catch (err) {
+          applicationsList().innerHTML = `<div class="card text-red-600">${escapeHTML(err.message)}</div>`;
+        }
+      }
+      function applicationsList() {
+        return document.getElementById("applications-list");
+      }
+      function renderMyApplications() {
+        const q = (
+          document.getElementById("my-app-search")?.value || ""
+        ).toLowerCase();
+        const apps = myApps.filter((app) =>
+          [
+            app.fullName,
+            app.email,
+            app.phone,
+            app.job?.title,
+            app.job?.recruiter?.company?.name,
+            app.job?.location,
+          ]
+            .join(" ")
+            .toLowerCase()
+            .includes(q),
+        );
+        const c = applicationsList();
+        c.innerHTML = "";
+        if (!apps.length) {
+          c.innerHTML = `<div class="card text-slate-500">No applications found.</div>`;
+          return;
+        }
+        apps.forEach((app) => {
+          const job = app.job || {};
+          const company = job.recruiter?.company?.name || "Company";
+          const resumeName =
+            app.resumeName ||
+            (app.resumeUrl ? String(app.resumeUrl).split("/").pop() : "Resume");
+          const resumePath = app.resumeUrl
+            ? String(app.resumeUrl).replace(/'/g, "\\'").replace(/\\/g, "\\\\")
+            : "";
+          c.innerHTML += `<article class="job-card-pro"><div class="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-6"><div class="flex-1"><div class="flex flex-wrap items-center gap-3 mb-3"><h3 class="text-xl font-bold">${escapeHTML(job.title || "Untitled Job")}</h3>${statusBadge(app.status)}</div><p class="text-slate-600 font-semibold">${escapeHTML(company)} • ${escapeHTML(job.location || "Location not specified")}</p><div class="grid md:grid-cols-2 gap-4 mt-5 text-sm text-slate-600"><p><strong>Your Name:</strong> ${escapeHTML(app.fullName || "N/A")}</p><p><strong>Email:</strong> ${escapeHTML(app.email || "N/A")}</p><p><strong>Phone:</strong> ${escapeHTML(app.phone || "N/A")}</p><p><strong>Applied:</strong> ${app.appliedAt ? new Date(app.appliedAt).toLocaleString() : "N/A"}</p></div><div class="mt-5"><p class="font-bold text-sm mb-2">Cover Letter</p><p class="text-slate-600 leading-7">${escapeHTML(app.coverLetter || "Not provided")}</p></div><div class="mt-5"><button class="resume-pill" onclick="openResume('${resumePath}', '${escapeHTML(resumeName)}')">
+  📄 ${escapeHTML(resumeName)}
+</button></div></div><div class="flex flex-wrap gap-3"><button onclick="viewJob('${job.id}')" class="btn-outline">View Job</button><button onclick="cancelApplication('${app.id}')" class="btn-primary danger">Cancel Request</button></div></div></article>`;
+        });
+      }
+      function viewJob(id) {
+        saveJobId(id);
+        saveBackPage("my-applications.html");
+        location.href = "view-job.html";
+      }
+      function cancelApplication(id) {
+        showConfirm(
+          "Are you sure you want to delete this application request? It will disappear for you and the recruiter.",
+          async () => {
+            try {
+              await apiFetch(`/applications/${id}`, { method: "DELETE" });
+              showToast("Application cancelled");
+              await loadMyApplications();
+            } catch (err) {
+              showToast(err.message, "error");
+            }
+          },
+        );
+      }
+    </script>
+  </body>
+</html>

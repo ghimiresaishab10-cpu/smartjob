@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Create Job - Smart Job</title>
+  <script src="https://cdn.tailwindcss.com?plugins=forms"></script>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+
+<body onload="protect(); requireRecruiter(); loadLayout('jobs')">
+  <div id="navbar"></div>
+
+  <main class="page-shell px-6 max-w-4xl mx-auto w-full">
+    <div class="card">
+      <h1 class="text-3xl font-extrabold mb-2">Create Job</h1>
+      <p class="text-slate-500 mb-8">Post a job for candidates to apply.</p>
+
+      <form id="create-job-form" class="space-y-5">
+        <input id="title" class="input" type="text" placeholder="Job Title" required />
+
+        <textarea id="description" class="input" rows="5" placeholder="Job Description" required></textarea>
+
+        <textarea id="requirements" class="input" rows="4" placeholder="Requirements" required></textarea>
+
+        <input id="location" class="input" type="text" placeholder="Location" required />
+
+        <input id="salaryRange" class="input" type="text" placeholder="Salary Range" />
+
+        <input id="jobType" class="input" type="text" placeholder="Job Type e.g. Full-time" required />
+
+        <input id="experienceLevel" class="input" type="text" placeholder="Experience Level e.g. 2 years" />
+
+        <input id="skills" class="input" type="text" placeholder="Skills e.g. React, Node.js" />
+
+        <div class="grid md:grid-cols-2 gap-4">
+          <input id="contactEmail" class="input" type="email" placeholder="Contact Email" />
+          <input id="contactPhone" class="input" type="text" placeholder="Contact Phone" />
+        </div>
+
+        <div class="flex justify-end gap-3 flex-wrap">
+          <button type="button" onclick="location.href='recruiter-jobs.html'" class="btn-outline">
+            Cancel
+          </button>
+
+          <button type="submit" class="btn-primary">
+            Create Post
+          </button>
+        </div>
+      </form>
+    </div>
+  </main>
+
+  <div id="footer"></div>
+
+  <script src="js/app.js"></script>
+
+  <script>
+    document.getElementById("create-job-form").addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const payload = {
+        title: document.getElementById("title").value.trim(),
+        description: document.getElementById("description").value.trim(),
+        requirements: document.getElementById("requirements").value.trim(),
+        location: document.getElementById("location").value.trim(),
+        salaryRange: document.getElementById("salaryRange").value.trim(),
+        jobType: document.getElementById("jobType").value.trim(),
+        experienceLevel: document.getElementById("experienceLevel").value.trim(),
+        skills: document.getElementById("skills").value.trim(),
+        contactEmail: document.getElementById("contactEmail").value.trim(),
+        contactPhone: document.getElementById("contactPhone").value.trim(),
+      };
+
+      try {
+        await apiFetch("/jobs", {
+          method: "POST",
+          body: JSON.stringify(payload),
+        });
+
+        showToast("Job created successfully");
+
+        setTimeout(() => {
+          location.href = "recruiter-jobs.html";
+        }, 800);
+      } catch (err) {
+        showToast(err.message || "Failed to create job", "error");
+      }
+    });
+  </script>
+</body>
+</html>
