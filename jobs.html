@@ -1,0 +1,286 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Find Jobs - Smart Job</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms"></script>
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+
+  <body
+    onload="
+      protect();
+      loadLayout('jobs');
+      initJobsPage();
+    "
+  >
+    <div id="navbar"></div>
+
+    <main class="pt-28 pb-12 px-4 max-w-7xl mx-auto w-full">
+      <div class="grid lg:grid-cols-[280px_minmax(0,1fr)] gap-6">
+        <!-- LEFT PROFILE SIDEBAR -->
+        <aside id="left-sidebar"></aside>
+
+        <!-- MAIN JOB SECTION -->
+        <section class="space-y-6">
+          <!-- SEARCH BAR -->
+          <div class="card flex flex-col md:flex-row gap-3 md:items-center">
+            <input
+              id="jobs-search"
+              class="form-input"
+              placeholder="Search jobs by title, company, skills, or location"
+              oninput="renderJobs()"
+            />
+
+            <button onclick="renderJobs()" class="btn-primary" type="button">
+              Search
+            </button>
+          </div>
+
+          <!-- JOB LIST -->
+          <div id="jobs-feed" class="space-y-6"></div>
+        </section>
+      </div>
+    </main>
+
+    <div id="footer"></div>
+
+    <script src="js/app.js"></script>
+
+    <script>
+      let allJobs = [];
+
+      function renderLeftSidebar() {
+        const user = getUser();
+        const left = document.getElementById("left-sidebar");
+
+        if (!user) return;
+
+        left.innerHTML = `
+          ${profileCardHTML(user)}
+
+          ${
+            user.role === "recruiter"
+              ? `
+                <button
+                  onclick="location.href='job-create.html'"
+                  class="btn-primary w-full mt-4"
+                  type="button"
+                >
+                  + Post Job
+                </button>
+              `
+              : ""
+          }
+        `;
+      }
+
+      async function loadJobs() {
+        const title = localStorage.getItem("search") || "";
+
+        document.getElementById("jobs-search").value = title;
+        localStorage.removeItem("search");
+
+        document.getElementById("jobs-feed").innerHTML =
+          '<div class="card"><div class="skeleton h-24"></div></div>';
+
+        const data = await apiFetch("/jobs?limit=100");
+
+        allJobs = data.jobs || [];
+
+        renderJobs();
+      }
+
+      async function renderJobs() {
+        const feed = document.getElementById("jobs-feed");
+        const user = getUser();
+
+        const q = (
+          document.getElementById("jobs-search")?.value || ""
+        ).toLowerCase();
+
+        const jobs = allJobs.filter((job) =>
+          [
+            job.title,
+            job.location,
+            job.skills,
+            job.jobType,
+            job.recruiter?.company?.name,
+            job.recruiter?.name,
+          ]
+            .join(" ")
+            .toLowerCase()
+            .includes(q)
+        );
+
+        feed.innerHTML = "";
+
+        if (!jobs.length) {
+          feed.innerHTML = `
+            <div class="card text-center">
+              <h3 class="text-2xl font-bold mb-3">No jobs found</h3>
+              <p class="text-slate-500">Try another search.</p>
+            </div>
+          `;
+          return;
+        }
+
+        for (const job of jobs) {
+          const r = job.recruiter || {};
+          const company = r.company?.name || "Company";
+
+          let actions = `
+            <button onclick="viewJob('${job.id}')" class="small-btn small-blue" type="button">
+              View
+            </button>
+          `;
+
+          if (user?.role === "candidate" && job.status !== "closed") {
+            try {
+              const check = await apiFetch(`/applications/check/${job.id}`);
+
+              actions += check.hasApplied
+                ? `<span class="badge badge-blue capitalize">${escapeHTML(check.status)}</span>`
+                : `
+                  <button onclick="applyJob('${job.id}')" class="small-btn small-gray" type="button">
+                    Apply Now
+                  </button>
+                `;
+            } catch {
+              actions += `
+                <button onclick="applyJob('${job.id}')" class="small-btn small-gray" type="button">
+                  Apply Now
+                </button>
+              `;
+            }
+          }
+
+          if (
+            user?.role === "recruiter" &&
+            Number(user.id) === Number(job.recruiterId)
+          ) {
+            actions += `
+              <button onclick="editJob('${job.id}')" class="small-btn small-gray" type="button">
+                Edit
+              </button>
+            `;
+
+            actions +=
+              job.status === "closed"
+                ? `
+                  <button onclick="reopenJob('${job.id}')" class="small-btn small-gray" type="button">
+                    Reopen
+                  </button>
+                `
+                : `
+                  <button onclick="closeJob('${job.id}')" class="small-btn small-gray" type="button">
+                    Close
+                  </button>
+                `;
+
+            actions += `
+              <button onclick="deleteJob('${job.id}')" class="small-btn small-red" type="button">
+                Delete
+              </button>
+            `;
+          }
+
+          feed.innerHTML += `
+            <article class="job-card-pro">
+              <div class="flex flex-col md:flex-row md:justify-between md:items-start gap-4">
+                <div>
+                  <button
+                    onclick="viewUserProfile('${r.id || ""}')"
+                    class="company-line text-left"
+                    type="button"
+                  >
+                    ${getProfileImageHTML(r, "w-12 h-12")}
+
+                    <span>
+                      <span class="text-blue-700 text-lg font-bold">
+                        ${escapeHTML(job.title || "Untitled Job")}
+                      </span>
+
+                      <small>
+                        Posted by ${escapeHTML(r.name || "Recruiter")}
+                        <span class="text-slate-400"> · </span>
+                        ${escapeHTML(job.location || "Location not specified")}
+                      </small>
+                    </span>
+                  </button>
+
+                  <p class="text-slate-500 mt-3 text-sm">
+                    ${escapeHTML(job.jobType || "N/A")}
+                    • ${escapeHTML(job.salaryRange || "N/A")}
+                  </p>
+                </div>
+
+                ${
+                  job.status === "closed"
+                    ? `<span class="badge badge-orange">Closed</span>`
+                    : `<span class="badge badge-blue">Open</span>`
+                }
+              </div>
+
+              <p class="text-slate-600 mt-5 leading-7">
+                ${escapeHTML(job.description || "No description available.")}
+              </p>
+
+              <p class="text-slate-500 mt-3 text-sm">
+                <strong>Skills:</strong>
+                ${escapeHTML(job.skills || "No skills listed.")}
+              </p>
+
+              <div class="mt-6 flex flex-wrap gap-3">
+                ${actions}
+              </div>
+            </article>
+          `;
+        }
+      }
+
+      async function initJobsPage() {
+        renderLeftSidebar();
+        await loadJobs();
+      }
+
+      function viewJob(id) {
+        saveJobId(id);
+        saveBackPage("jobs.html");
+        location.href = "view-job.html";
+      }
+
+      function editJob(id) {
+        saveJobId(id);
+        saveBackPage("jobs.html");
+        location.href = "edit-job.html";
+      }
+
+      function applyJob(id) {
+        saveJobId(id);
+        saveBackPage("jobs.html");
+        location.href = "apply.html";
+      }
+
+      async function closeJob(id) {
+        showConfirm("Close this job?", async () => {
+          await apiFetch(`/jobs/${id}/close`, { method: "PATCH" });
+          await loadJobs();
+        });
+      }
+
+      async function reopenJob(id) {
+        await apiFetch(`/jobs/${id}/reopen`, { method: "PATCH" });
+        await loadJobs();
+      }
+
+      async function deleteJob(id) {
+        showConfirm("Delete this job permanently?", async () => {
+          await apiFetch(`/jobs/${id}`, { method: "DELETE" });
+          await loadJobs();
+        });
+      }
+    </script>
+  </body>
+</html>
