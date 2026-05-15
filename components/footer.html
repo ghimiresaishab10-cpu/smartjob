@@ -1,0 +1,35 @@
+<footer class="bg-[#f2f6ff] py-10 mt-16 border-t border-blue-100">
+  <div class="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-6">
+    <div>
+      <div class="font-bold text-blue-900 text-lg brand-logo"><span class="brand-mark">SJ</span><span>Smart Job</span></div>
+      <p class="text-gray-500 text-sm">© 2026 Smart Job. All rights reserved.</p>
+    </div>
+    <div class="flex gap-6 text-sm flex-wrap justify-center">
+      <a href="privacy-policy.html" class="footer-link">Privacy Policy</a>
+      <a href="terms-service.html" class="footer-link">Terms of Service</a>
+      <a href="contact.html" class="footer-link">Contact</a>
+    </div>
+  </div>
+</footer>
+
+<button id="chatbot-open-btn" onclick="openChatbot()">💬</button>
+<div id="chatbot-window" class="hidden">
+  <div class="chat-head">
+    <button onclick="closeChatbot()" class="text-2xl leading-none bg-transparent border-0 text-white cursor-pointer">×</button>
+    <div class="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center">🤖</div>
+    <div class="font-bold flex-1">Smart Job AI Assistant</div>
+    <button onclick="clearChatHistory()" class="text-xs bg-white/15 border-0 text-white rounded-full px-3 py-1 cursor-pointer">Clear</button>
+  </div>
+  <div id="chatbot-body" class="chat-body">
+    <div class="chat-name">SmartBot</div>
+    <div class="chat-bubble bot">Namaste! 🙏 I can answer questions about Smart Job, public jobs, applications, profile, and safe website help.</div>
+    <div id="chatbot-options" class="chat-suggestions"></div>
+  </div>
+  <div class="chat-input-wrap">
+    <div class="chat-input-row">
+      <input id="chatbot-input" type="text" placeholder="Ask about jobs, profile, applications..." onkeydown="if(event.key==='Enter') sendChatMessage()" />
+      <button onclick="sendChatMessage()" class="chat-send">Send</button>
+    </div>
+    <div class="text-center text-[11px] text-slate-400 mt-2">Does not reveal confidential data.</div>
+  </div>
+</div>

@@ -1,0 +1,221 @@
+<!doctype html>
+<html class="light" lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>About - Smart Job</title>
+
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="css/style.css" />
+
+    <style>
+      body {
+        font-family: "Poppins", sans-serif;
+        background: #faf8ff;
+        color: #191b23;
+      }
+
+      .about-shadow {
+        box-shadow: 0 8px 32px rgba(25, 27, 35, 0.06);
+      }
+    </style>
+  </head>
+  <body onload="loadLayout('about')" class="bg-[#faf8ff] text-[#191b23]">
+    <div id="navbar"></div>
+
+    <main class="pt-28">
+      <!-- Hero -->
+      <section class="max-w-6xl mx-auto px-6 py-10 text-center">
+        <h1 class="text-4xl md:text-5xl font-extrabold mb-8">About SmartJob</h1>
+
+        <div
+          class="max-w-2xl mx-auto rounded-xl overflow-hidden about-shadow bg-white"
+        >
+          <img
+            src="uploads/founders/about.png"
+            alt="SmartJob office"
+            class="w-full h-[260px] md:h-[320px] object-cover"
+          />
+        </div>
+
+        <p
+          class="text-slate-500 text-sm md:text-base max-w-2xl mx-auto mt-6 leading-7"
+        >
+          SmartJob is a career platform designed to connect talented candidates
+          with trusted recruiters. We focus on making job discovery more
+          organized, more transparent, and more useful for the modern workforce.
+        </p>
+      </section>
+
+      <!-- Vision -->
+      <section
+        class="max-w-6xl mx-auto px-6 py-16 grid grid-cols-1 md:grid-cols-2 gap-12 items-center"
+      >
+        <div>
+          <h2 class="text-2xl font-bold mb-6">Our Vision</h2>
+          <div class="space-y-4 text-slate-600 leading-7 text-sm md:text-base">
+            <p>
+              Our vision at SmartJob is to simplify the connection between
+              skilled candidates and companies looking for the right people. We
+              believe job searching should be clear, efficient, and accessible
+              to everyone.
+            </p>
+            <p>
+              Instead of endless lists, we want to provide a focused platform
+              where users can discover opportunities that match their skills,
+              goals, and interests. SmartJob is built to help both recruiters
+              and candidates move forward with confidence.
+            </p>
+          </div>
+        </div>
+
+        <div class="rounded-xl overflow-hidden about-shadow bg-white">
+          <img
+            src="uploads/founders/about1.png"
+            alt="Vision"
+            class="w-full h-[320px] object-cover"
+          />
+        </div>
+      </section>
+
+      <!-- Core Values -->
+      <section class="bg-[#f2f3fe] py-16">
+        <div class="max-w-6xl mx-auto px-6">
+          <h2 class="text-2xl font-bold text-center mb-12">Core Values</h2>
+
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div class="bg-white rounded-xl p-8 text-center about-shadow">
+              <div
+                class="w-14 h-14 mx-auto mb-5 bg-blue-100 rounded-xl flex items-center justify-center"
+              >
+                <img
+                  src="uploads/homepage/landingIcon.svg"
+                  alt="Curation first"
+                  class="w-7 h-7 object-contain"
+                />
+              </div>
+              <h3 class="font-bold text-lg mb-3">Curation First</h3>
+              <p class="text-slate-500 text-sm leading-6">
+                We focus on quality opportunities so users spend less time
+                searching and more time applying to the right roles.
+              </p>
+            </div>
+
+            <div class="bg-white rounded-xl p-8 text-center about-shadow">
+              <div
+                class="w-14 h-14 mx-auto mb-5 bg-blue-100 rounded-xl flex items-center justify-center"
+              >
+                <img
+                  src="uploads/homepage/landingIcon1.svg"
+                  alt="Radical clarity"
+                  class="w-7 h-7 object-contain"
+                />
+              </div>
+              <h3 class="font-bold text-lg mb-3">Radical Clarity</h3>
+              <p class="text-slate-500 text-sm leading-6">
+                We want job information to be simple and direct, so candidates
+                and recruiters can understand each other clearly.
+              </p>
+            </div>
+
+            <div class="bg-white rounded-xl p-8 text-center about-shadow">
+              <div
+                class="w-14 h-14 mx-auto mb-5 bg-blue-100 rounded-xl flex items-center justify-center"
+              >
+                <img
+                  src="uploads/homepage/landingIcon2.svg"
+                  alt="Human agency"
+                  class="w-7 h-7 object-contain"
+                />
+              </div>
+              <h3 class="font-bold text-lg mb-3">Human Agency</h3>
+              <p class="text-slate-500 text-sm leading-6">
+                Technology should support people, not replace them. SmartJob
+                helps users make better career decisions with confidence.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Team -->
+      <section class="max-w-6xl mx-auto px-6 py-16">
+        <div class="mb-10">
+          <h2 class="text-2xl font-bold mb-2">Meet the Team</h2>
+          <p class="text-slate-500 text-sm">The people behind SmartJob.</p>
+        </div>
+
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+          <div class="bg-white rounded-xl overflow-hidden about-shadow">
+            <img
+              src="uploads/founders/person.png"
+              alt="Team member 1"
+              class="w-full h-64 object-cover"
+            />
+            <div class="p-4">
+              <h4 class="font-bold text-sm md:text-base">Bishal Budha</h4>
+              <p class="text-slate-500 text-xs md:text-sm">
+                Project Manager
+              </p>
+            </div>
+          </div>
+
+          <div class="bg-white rounded-xl overflow-hidden about-shadow">
+            <img
+              src="uploads/founders/person1.png"
+              alt="Team member 2"
+              class="w-full h-64 object-cover"
+            />
+            <div class="p-4">
+              <h4 class="font-bold text-sm md:text-base">Sefin Gwachha</h4>
+              <p class="text-slate-500 text-xs md:text-sm">Business Analyst</p>
+            </div>
+          </div>
+
+          <div class="bg-white rounded-xl overflow-hidden about-shadow">
+            <img
+              src="uploads/founders/person2.jpeg"
+              alt="Team member 3"
+              class="w-full h-64 object-cover"
+            />
+            <div class="p-4">
+              <h4 class="font-bold text-sm md:text-base">Kushal Gurung</h4>
+              <p class="text-slate-500 text-xs md:text-sm">Developer</p>
+            </div>
+          </div>
+
+          <div class="bg-white rounded-xl overflow-hidden about-shadow">
+            <img
+              src="uploads/founders/person3.png"
+              alt="Team member 4"
+              class="w-full h-64 object-cover"
+            />
+            <div class="p-4">
+              <h4 class="font-bold text-sm md:text-base">Sulan Shrestha</h4>
+              <p class="text-slate-500 text-xs md:text-sm">Developer</p>
+            </div>
+          </div>
+          <div class="bg-white rounded-xl overflow-hidden about-shadow">
+            <img
+              src="uploads/founders/person4.jpeg"
+              alt="Team member 5"
+              class="w-full h-64 object-cover"
+            />
+            <div class="p-4">
+              <h4 class="font-bold text-sm md:text-base">Saishab Ghimire</h4>
+              <p class="text-slate-500 text-xs md:text-sm">Developer</p>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <div id="footer"></div>
+
+    <script src="js/app.js"></script>
+  </body>
+</html>
