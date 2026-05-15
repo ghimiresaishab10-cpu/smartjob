@@ -1,0 +1,213 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>View Job - Smart Job</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms"></script>
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+  <body
+    onload="
+      protect();
+      loadLayout('jobs');
+      loadViewJob();
+    "
+  >
+    <div id="navbar"></div>
+    <main class="pt-28 pb-20 px-6 max-w-6xl mx-auto w-full">
+      <div class="mb-6">
+        <button onclick="goBackPage()" class="btn-outline">← Back</button>
+      </div>
+      <div class="grid lg:grid-cols-[1fr_340px] gap-8">
+        <div class="space-y-6">
+          <section class="detail-section">
+            <div
+              class="flex flex-col md:flex-row md:justify-between md:items-start gap-4"
+            >
+              <div>
+                <h1 id="job-title" class="text-3xl md:text-4xl font-extrabold">
+                  Loading...
+                </h1>
+                <p id="job-meta" class="text-slate-500 mt-3"></p>
+              </div>
+              <div id="job-status"></div>
+            </div>
+          </section>
+          <section class="detail-section">
+            <h2 class="text-2xl font-bold mb-4">Job Description</h2>
+            <p id="job-description" class="text-slate-600 leading-7"></p>
+          </section>
+          <section class="contact-strip">
+            <h2 class="text-xl font-bold mb-4">Company Contact Details</h2>
+            <div
+              id="contact-details"
+              class="grid md:grid-cols-2 gap-4 text-sm text-slate-700"
+            ></div>
+          </section>
+          <section class="detail-section">
+            <h2 class="text-2xl font-bold mb-4">Requirements</h2>
+            <p id="job-requirements" class="text-slate-600 leading-7"></p>
+          </section>
+          <section class="detail-section">
+            <h2 class="text-2xl font-bold mb-4">Skills</h2>
+            <p id="job-skills" class="text-slate-600 leading-7"></p>
+          </section>
+          <section id="company-about-section" class="detail-section hidden">
+            <h2 class="text-2xl font-bold mb-4">About Company</h2>
+            <p id="company-about" class="text-slate-600 leading-7"></p>
+          </section>
+        </div>
+        <aside class="space-y-6">
+          <div class="detail-section h-fit">
+            <h3 class="text-xl font-bold mb-6">Position Overview</h3>
+            <div class="space-y-4 text-sm">
+              <p><strong>Salary:</strong> <span id="job-salary">N/A</span></p>
+              <p><strong>Job Type:</strong> <span id="job-type">N/A</span></p>
+              <p>
+                <strong>Experience:</strong>
+                <span id="job-experience">N/A</span>
+              </p>
+              <p>
+                <strong>Location:</strong> <span id="job-location">N/A</span>
+              </p>
+            </div>
+            <div id="job-actions" class="mt-8"></div>
+          </div>
+          <div class="detail-section">
+            <h3 class="text-xl font-bold mb-4">Recruiter</h3>
+            <div
+              id="recruiter-card"
+              class="text-sm text-slate-600 space-y-3"
+            ></div>
+          </div>
+        </aside>
+      </div>
+    </main>
+    <div id="footer"></div>
+    <script src="js/app.js"></script>
+    <script>
+      let currentJob = null;
+      async function loadViewJob() {
+        const id = getJobId();
+        if (!id) return (location.href = "jobs.html");
+        const job = await apiFetch(`/jobs/${id}`);
+        currentJob = job;
+        const r = job.recruiter || {},
+          company = r.company || {};
+        jobTitle().textContent = job.title || "Untitled Job";
+        document.getElementById("job-meta").innerHTML = `
+  <span class="font-bold text-blue-700">
+    Posted by ${escapeHTML(company.name || r.name || "Company")}
+  </span>
+  <span class="text-slate-400 mx-2">·</span>
+  <span class="text-slate-600">
+    ${escapeHTML(job.location || "Location not specified")}
+  </span>
+`;
+        ["description", "requirements", "skills"].forEach(
+          (k) =>
+            (document.getElementById("job-" + k).textContent =
+              job[k] || `No ${k} listed.`),
+        );
+        document.getElementById("job-salary").textContent =
+          job.salaryRange || "N/A";
+        document.getElementById("job-type").textContent = job.jobType || "N/A";
+        document.getElementById("job-experience").textContent =
+          job.experienceLevel || "N/A";
+        document.getElementById("job-location").textContent =
+          job.location || "N/A";
+        document.getElementById("job-status").innerHTML =
+          job.status === "closed"
+            ? `<span class="badge badge-orange">Closed</span>`
+            : `<span class="badge badge-blue">Open</span>`;
+        const contactItems = [];
+        if (job.contactEmail)
+          contactItems.push(
+            `<p><strong>Email:</strong> ${escapeHTML(job.contactEmail)}</p>`,
+          );
+        if (job.contactPhone)
+          contactItems.push(
+            `<p><strong>Phone:</strong> ${escapeHTML(job.contactPhone)}</p>`,
+          );
+        if (company.website || r.website)
+          contactItems.push(
+            `<p><strong>Website:</strong> ${escapeHTML(company.website || r.website)}</p>`,
+          );
+        if (company.companyType || r.companyType)
+          contactItems.push(
+            `<p><strong>Company Type:</strong> ${escapeHTML(company.companyType || r.companyType)}</p>`,
+          );
+        const contactSection = document.querySelector(".contact-strip");
+        if (contactItems.length) {
+          document.getElementById("contact-details").innerHTML =
+            contactItems.join("");
+          contactSection.classList.remove("hidden");
+        } else {
+          contactSection.classList.add("hidden");
+        }
+        if (company.about || r.overview) {
+          document
+            .getElementById("company-about-section")
+            .classList.remove("hidden");
+          document.getElementById("company-about").textContent =
+            company.about || r.overview;
+        }
+        renderRecruiterCard(job);
+        await renderActions(job);
+      }
+      function jobTitle() {
+        return document.getElementById("job-title");
+      }
+      function renderRecruiterCard(job) {
+        const r = job.recruiter || {},
+          company = r.company || {};
+        document.getElementById("recruiter-card").innerHTML =
+          `<button onclick="viewUserProfile('${r.id || ""}')" class="flex items-center gap-3 text-left w-full">${getProfileImageHTML(r, "w-12 h-12")}<span><span class="block font-bold text-slate-800">${escapeHTML(r.name || "Recruiter")}</span><span class="text-blue-700 font-bold">${escapeHTML(company.name || "Company")}</span></span></button><p>${escapeHTML(r.bio || "")}</p>`;
+      }
+      async function renderActions(job) {
+        const user = getUser();
+        const a = document.getElementById("job-actions");
+        if (user?.role === "candidate" && job.status !== "closed") {
+          try {
+            const check = await apiFetch(`/applications/check/${job.id}`);
+            a.innerHTML = check.hasApplied
+              ? `<div class="text-center"><p class="text-sm text-slate-500 mb-2">Already applied</p><span class="badge badge-blue capitalize">${escapeHTML(check.status)}</span></div>`
+              : `<button onclick="applyNow()" class="btn-primary w-full">Apply Now</button>`;
+          } catch {
+            a.innerHTML = `<button onclick="applyNow()" class="btn-primary w-full">Apply Now</button>`;
+          }
+        } else if (
+          user?.role === "recruiter" &&
+          Number(user.id) === Number(job.recruiterId)
+        ) {
+          a.innerHTML = `<div class="flex flex-col gap-3"><button onclick="editNow()" class="btn-outline">Edit</button>${job.status === "closed" ? `<button onclick="reopenNow()" class="btn-primary">Reopen</button>` : `<button onclick="closeNow()" class="btn-outline">Close</button>`}<button onclick="deleteNow()" class="btn-primary danger">Delete</button></div>`;
+        } else a.innerHTML = "";
+      }
+      function applyNow() {
+        saveBackPage("view-job.html");
+        location.href = "apply.html";
+      }
+      function editNow() {
+        saveBackPage("view-job.html");
+        location.href = "edit-job.html";
+      }
+      async function closeNow() {
+        showConfirm("Close this job?", async () => {
+          await apiFetch(`/jobs/${currentJob.id}/close`, { method: "PATCH" });
+          loadViewJob();
+        });
+      }
+      async function reopenNow() {
+        await apiFetch(`/jobs/${currentJob.id}/reopen`, { method: "PATCH" });
+        loadViewJob();
+      }
+      async function deleteNow() {
+        showConfirm("Delete this job permanently?", async () => {
+          await apiFetch(`/jobs/${currentJob.id}`, { method: "DELETE" });
+          location.href = "jobs.html";
+        });
+      }
+    </script>
+  </body>
+</html>

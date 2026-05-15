@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>User Profile - Smart Job</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms"></script>
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+  <body
+    onload="
+      protect();
+      loadLayout();
+      loadUserProfile();
+    "
+  >
+    <div id="navbar"></div>
+    <main class="page-shell px-6 max-w-6xl mx-auto w-full">
+      <button onclick="history.back()" class="btn-outline mb-6">← Back</button>
+      <section class="profile-hero">
+        <div id="profile-view"></div>
+        <div id="profile-edit" class="hidden"></div>
+      </section>
+    </main>
+    <div id="footer"></div>
+    <script src="js/app.js"></script>
+    <script>
+      let currentProfileUser = null,
+        isOwner = false;
+      async function loadUserProfile() {
+        const logged = getUser();
+        const id = localStorage.getItem("profileUserId") || logged?.id;
+        if (!id) return (location.href = "jobs.html");
+        try {
+          const user = await apiFetch(`/users/${id}`);
+          currentProfileUser = user;
+          isOwner = Number(logged?.id) === Number(user.id);
+          renderProfileView(user);
+        } catch (err) {
+          profileView().innerHTML = `<p class="text-red-600">${escapeHTML(err.message)}</p>`;
+        }
+      }
+      function profileView() {
+        return document.getElementById("profile-view");
+      }
+      function showField(label, value) {
+        if (!value) return "";
+        return `<div class="pro-card !p-5"><strong>${label}</strong><p class="text-slate-500 mt-2 whitespace-pre-line break-words">${escapeHTML(value)}</p></div>`;
+      }
+      function renderJobs(user) {
+        const jobs = user.postedJobs || [];
+        if (user.role !== "recruiter") return "";
+        if (!jobs.length)
+          return `<div class="pro-card !p-5 mt-5"><h3 class="font-bold mb-2">Posted Jobs</h3><p class="text-slate-500">No jobs posted yet.</p></div>`;
+        return `<div class="pro-card !p-5 mt-5"><h3 class="font-bold mb-4">Jobs Posted by ${escapeHTML(user.name || "Recruiter")}</h3><div class="grid md:grid-cols-2 gap-4">${jobs.map((j) => `<button onclick="saveJobId('${j.id}'); saveBackPage('user-profile.html'); location.href='view-job.html'" class="text-left border border-blue-100 rounded-2xl p-4 hover:bg-blue-50"><strong class="text-blue-700">${escapeHTML(j.title || "Untitled Job")}</strong><p class="text-sm text-slate-500 mt-2">${escapeHTML(j.location || "Location not specified")} • ${escapeHTML(j.jobType || "N/A")}</p></button>`).join("")}</div></div>`;
+      }
+      function renderProfileView(user) {
+        const company = user.company || {};
+
+        profileView().innerHTML = `
+    <div class="profile-edit-grid items-start">
+      <div class="text-center">
+        ${getProfileImageHTML(user, "profile-photo-xl")}
+      </div>
+
+      <div>
+        <div class="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
+          <div>
+            <h1 class="text-4xl font-extrabold tracking-tight">
+              ${escapeHTML(user.name || "User")}
+            </h1>
+
+            <span class="badge badge-blue mt-4 capitalize">
+              ${escapeHTML(user.role || "")}
+            </span>
+          </div>
+
+          ${
+            isOwner
+              ? `<button onclick="showEditProfile()" class="btn-primary">Edit Profile</button>`
+              : ""
+          }
+        </div>
+
+        <div class="grid md:grid-cols-2 gap-4 mt-8 text-sm">
+          ${showField("Location", user.location)}
+          ${showField("Website", user.website)}
+          ${showField("Skills", user.skills)}
+          ${user.role === "recruiter" ? showField("Company Name", company.name) : ""}
+          ${user.role === "recruiter" ? showField("Company Type", company.companyType || user.companyType) : ""}
+        </div>
+
+        ${showField("Bio", user.bio)}
+        ${showField(
+          user.role === "recruiter" ? "Company Overview" : "Overview",
+          user.role === "recruiter"
+            ? company.about || user.overview
+            : user.overview,
+        )}
+
+        ${renderJobs(user)}
+      </div>
+    </div>
+  `;
+      }
+      function showEditProfile() {
+        const u = currentProfileUser,
+          c = u.company || {};
+        profileView().classList.add("hidden");
+        document.getElementById("profile-edit").classList.remove("hidden");
+        document.getElementById("profile-edit").innerHTML =
+          `<h2 class="text-3xl font-extrabold mb-8">Edit Profile</h2><form id="profileForm" class="profile-edit-grid"><div class="text-center"><div id="previewBox">${getProfileImageHTML(u, "profile-photo-xl")}</div><label class="block mt-5 text-left">Profile Photo</label><input type="file" id="profileImage" accept="image/*" class="mt-2" /><p class="text-xs text-slate-400 mt-2 text-left">JPG, PNG or WEBP. New photo replaces the old one.</p></div><div class="space-y-5"><div><label>Full Name</label><input id="name" class="input" value="${escapeHTML(u.name || "")}" /></div><div><label>Phone Number</label><input id="phoneNumber" class="input" value="${escapeHTML(u.phoneNumber || "")}" /></div><div><label>Location</label><input id="location" class="input" value="${escapeHTML(u.location || "")}" /></div><div><label>Website</label><input id="website" class="input" value="${escapeHTML(u.website || "")}" /></div><div><label>Skills</label><input id="skills" class="input" value="${escapeHTML(u.skills || "")}" placeholder="JavaScript, React, Node.js" /></div>${u.role === "recruiter" ? `<div><label>Company Name</label><input id="companyName" class="input" value="${escapeHTML(c.name || "")}" /></div><div><label>What is your company about?</label><input id="companyType" class="input" value="${escapeHTML(c.companyType || u.companyType || "")}" placeholder="Software development, IT services, hiring agency..." /></div><div><label>Company Overview</label><textarea id="companyOverview" rows="6" class="input">${escapeHTML(c.about || u.overview || "")}</textarea></div>` : `<div><label>Overview / About Me</label><textarea id="overview" rows="6" class="input">${escapeHTML(u.overview || "")}</textarea></div>`}<div><label>Bio</label><textarea id="bio" rows="5" class="input">${escapeHTML(u.bio || "")}</textarea></div><div class="flex gap-3 flex-wrap"><button type="submit" class="btn-primary">Save Changes</button><button type="button" onclick="cancelEdit()" class="btn-outline">Cancel</button></div></div></form>`;
+        document
+          .getElementById("profileImage")
+          .addEventListener("change", function () {
+            const file = this.files[0];
+            if (!file) return;
+            document.getElementById("previewBox").innerHTML =
+              `<img src="${URL.createObjectURL(file)}" class="profile-photo-xl" />`;
+          });
+        document
+          .getElementById("profileForm")
+          .addEventListener("submit", updateProfile);
+      }
+      function cancelEdit() {
+        document.getElementById("profile-edit").classList.add("hidden");
+        profileView().classList.remove("hidden");
+      }
+      async function updateProfile(e) {
+        e.preventDefault();
+        const fd = new FormData();
+        ["name", "phoneNumber", "location", "website", "skills", "bio"].forEach(
+          (id) => fd.append(id, document.getElementById(id)?.value || ""),
+        );
+        if (currentProfileUser.role === "recruiter") {
+          ["companyName", "companyType", "companyOverview"].forEach((id) =>
+            fd.append(id, document.getElementById(id)?.value || ""),
+          );
+          fd.append(
+            "overview",
+            document.getElementById("companyOverview")?.value || "",
+          );
+        } else {
+          fd.append(
+            "overview",
+            document.getElementById("overview")?.value || "",
+          );
+        }
+        const file = document.getElementById("profileImage").files[0];
+        if (file) fd.append("profileImage", file);
+        try {
+          const updated = await apiFetch("/users/profile", {
+            method: "PUT",
+            body: fd,
+          });
+          localStorage.setItem("user", JSON.stringify(updated));
+          localStorage.setItem("profileUserId", updated.id);
+          currentProfileUser = await apiFetch(`/users/${updated.id}`);
+          renderProfileView(currentProfileUser);
+          cancelEdit();
+          renderNavRight();
+          showToast("Profile updated successfully");
+        } catch (err) {
+          showToast(err.message, "error");
+        }
+      }
+    </script>
+  </body>
+</html>
